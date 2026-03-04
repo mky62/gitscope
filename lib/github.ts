@@ -1,7 +1,10 @@
-function requireOk(res, context) {
+import type { Repo } from "@/lib/types";
+
+function requireOk(res: Response, context: string) {
     if (res.ok) return;
-    throw new Error(`$(context) failed : ${res.status}`)
+    throw new Error(`${context} failed (${res.status})`);
 }
+
 export async function fetchGitPublicRepo(username: string, token?: string): Promise<Repo[]> {
     const url = `https://api.github.com/users${encodeURIComponent(username)
         }/repos?per_page=100&sort=updated`;
@@ -11,10 +14,10 @@ export async function fetchGitPublicRepo(username: string, token?: string): Prom
     };
 
     if (token) {
-        headers.Authorizations = `Bearer ${token}`;
+        headers.Authorization = `Bearer ${token}`;
     }
 
-    await fetch(url, {
+    const res = await fetch(url, {
         method: "GET",
         headers,
         cache: "no-store",

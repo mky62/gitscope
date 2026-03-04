@@ -1,7 +1,33 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
 
-export default function () {
+type GitConnectProps = {
+    syncStatus: string,
+    lastSyncedAt: string,
+    loading: boolean
+}
+
+export default function ({ syncStatus, lastSyncedAt, repoCount }: GitConnectProps) {
+
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = userState<string | null>(null);
+
+    const isBusy = loading || syncStatus === "SYNCING";
+
+    function handleSync() {
+        setLoading(true);
+        setError(null);
+
+        try {
+            await fetch("/api/syncrepo", { method: "POST" });
+
+        }
+    
+
+   }
+
+
     const cfg = {
         color: "bg-green-500",
         dotColor: "bg-green-500",
@@ -59,9 +85,8 @@ export default function () {
                 </div>
                 <Button
                     type='button'
-                    disable={loading || syncStatus === "SYNCING"}
-                    onClick={handleSync}
-                ></Button>
+
+                >Sync</Button>
 
             </div>
 
