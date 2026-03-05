@@ -23,7 +23,7 @@ export default function SignInForm() {
         sizes="100vw"
         className="absolute inset-0 -z-20 object-cover"
       />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/25 via-black/15 to-black/35" />
+      <div className="absolute inset-0 -z-10 pointer-events-none bg-gradient-to-b from-black/25 via-black/15 to-black/35" />
 
       <div className="m-4 space-y-6 rounded-2xl bg-white/20 px-6 py-8 shadow-2xl backdrop-blur-xl sm:px-8 sm:py-10">
         <div className="flex justify-center">
