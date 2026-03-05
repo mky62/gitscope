@@ -2,8 +2,8 @@ import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 
-import { prisma } from "@/src/lib/prisma";
-import { syncRepos } from "@/src/lib/sync";
+import { prisma } from "@/lib/prisma";
+import { syncRepos } from "@/lib/sync";
 
 export const runtime = "nodejs";
 
