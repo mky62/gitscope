@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
 import GitConnect from "./components/GitConnect";
+import OwnerProfile from "./components/OwnerProfile";
+import RepoList from "./components/RepoList";
+import DeleteAccount from "./components/DeleteAccount";
 
 export const runtime = "nodejs";
 
@@ -58,32 +61,63 @@ async function provisionUser(userId: string): Promise<UserWithRepos> {
   return user;
 }
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default function DashboardPage() {
-    return (
-        <div className="w-full h-screen flex flex-col">
+export default async function DashboardPage() {
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
 
-            {/* Top Bar */}
-            <div className="h-12 border-b border-black flex items-center px-4">
-            </div>
+  const user = (await fetchUser(userId)) ?? (await provisionUser(userId));
 
-            {/* Main Content */}
-            <div className="flex flex-1 flex-col md:flex-row">
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="mt-1 text-muted-foreground">
+            Manage your profile and GitHub repositories
+          </p>
+        </header>
 
-                {/* Sidebar */}
-                <div className="w-full md:w-[30%] lg:w-[40%] border-b md:border-b-0 md:border-r border-black">
-                </div>
-
-                {/* Main Panel */}
-                <div className="w-full md:w-[70%] lg:w-[60%] p-2">
- {/* Sync Controls */}
         <GitConnect
-          syncStatus={data.syncStatus}
-          lastSyncedAt={data.lastSyncedAt?.toISOString() ?? null}
-          repoCount={data.repos.length}
-        />                </div>
+          syncStatus={user.syncStatus}
+          lastSyncedAt={user.lastSyncedAt?.toISOString() ?? null}
+          repoCount={user.repos.length}
+        />
 
-            </div>
+        <div className="mt-6">
+          <OwnerProfile
+            user={{
+              stageName: user.stageName,
+              username: user.username,
+              avatarUrl: user.avatarUrl,
+              description: user.description,
+              socialLinks: user.socialLinks,
+              isPublic: user.isPublic,
+            }}
+          />
         </div>
-    )
+
+        <div className="mt-6">
+          <RepoList repos={user.repos} />
+        </div>
+
+        <DangerZone />
+      </div>
+    </div>
+  );
+}
+
+function DangerZone() {
+  return (
+    <section className="mt-10 rounded-2xl border border-destructive/20 bg-destructive/5 p-6">
+      <h3 className="text-sm font-semibold text-destructive">Danger Zone</h3>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Permanently delete your account, profile, and all synced repositories.
+      </p>
+      <div className="mt-4">
+        <DeleteAccount />
+      </div>
+    </section>
+  );
 }
